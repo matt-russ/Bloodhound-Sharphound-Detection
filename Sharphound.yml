@@ -1,0 +1,29 @@
+title: DI_-_Sharphound_-_T1018_&_T1482.yml
+id: afdde550-5989-11ea-98c0-982cbc2944e6
+status:
+description:Bloodhound uses graph theory to reveal the hidden and often unintended relationships within an Active Directory environment. Attackers can use Bloodhound to easily identify highly complex attack paths that would otherwise be impossible to quickly identify. Defenders can use Bloodhound to identify and eliminate those same attack paths. Both blue and red teams can use Bloodhound to easily gain a deeper understanding of privilege relationships in an Active Directory environment.
+
+This detection focuses on the information gathering piece of Bloodhound, which is Sharphound.  Sharphound is a completely custom C# ingestor written from the ground up to support collection activities. Two options exist for using the ingestor, an executable and a PowerShell script. Both ingestors support the same set of options. The command to run the PowerShell version is Invoke-BloodHound. Like all PowerShell scripts, it must be run in a PowerShell runspace without execution policy restrictions.
+
+In my testing when I ran the tool, Bloodhound reached out to every IP on 445 and read from the 4 named pipes in the below logic. 
+references:
+-
+tags:
+- attack.
+detection:
+selection0:
+- ProcessName : '*.exe*'
+selection1:
+-TargetFileName: '*pipe\\wkssvc*'
+2TargetFileName: '*pipe\\netlogon*'
+1TargetFileName: '*pipe\\srvsvc*'
+0TargetFileName: '*pipe\\samr*'
+selection12:
+-NetworkPort: '*445*'
+selection122:
+- ProcessName : '*\\lnsscomm.exe'
+condition:
+selection0 and selection1 and selection12 and not selection122
+falsepositives:
+-
+level: High
